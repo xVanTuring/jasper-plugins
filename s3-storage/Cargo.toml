@@ -1,0 +1,18 @@
+[package]
+name = "s3-storage"
+version = "0.1.0"
+edition = "2021"
+description = "Jasper storage plugin: S3-compatible object storage (AWS S3 / MinIO / R2, path-style, SigV4 over host:http)"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+jasper-plugin-sdk = "0.2"
+roxmltree = "0.20"
+chrono = { version = "0.4", default-features = false, features = ["std"] }
+# SigV4：纯 Rust（RustCrypto），wasm32-unknown-unknown 可编译
+sha2 = "0.10"
+hmac = "0.12"

@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - name: Unit tests (native)
+        run: cargo test --workspace
+      - name: Build wasm
+        run: cargo build --release --target wasm32-unknown-unknown --workspace
+      - name: Validate + package all plugins
+        run: |
+          for p in s3-storage ai-polish; do
+            python3 scripts/package.py "$p"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jplugs
+          path: dist/*.jplug

@@ -1,0 +1,13 @@
+[package]
+name = "ai-polish"
+version = "0.1.0"
+edition = "2021"
+description = "Jasper editor plugin: one-click AI polish for the current note body (Anthropic Messages / OpenAI Chat Completions)"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+jasper-plugin-sdk = "0.2"

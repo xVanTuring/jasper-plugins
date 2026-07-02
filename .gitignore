@@ -1,0 +1,4 @@
+/target
+/dist
+plugin.wasm
+.DS_Store
