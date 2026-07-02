@@ -29,6 +29,17 @@ cargo build --release --target wasm32-unknown-unknown --workspace
 python3 scripts/package.py s3-storage        # -> dist/s3-storage-<version>.jplug
 ```
 
+Tests use the SDK's `native-host` feature (dev-dependency), so integration
+tests run without the wasm sandbox — `ai-polish` exercises its full
+settings→request→parse flow against a local stub, and `s3-storage` does a live
+round-trip against MinIO when `JASPER_TEST_S3_URL` is set (skipped otherwise):
+
+```sh
+docker compose -f docker-compose.dev.yml up -d
+JASPER_TEST_S3_URL=http://127.0.0.1:9000 cargo test --workspace
+docker compose -f docker-compose.dev.yml down -v
+```
+
 `scripts/package.py` mirrors the host's install-time validation and checks the
 wasm import section (only `joplin.host_call` is allowed). Zips are built
 deterministically, so the sha256 is reproducible from source.

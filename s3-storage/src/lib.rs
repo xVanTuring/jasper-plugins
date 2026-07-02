@@ -474,3 +474,66 @@ mod tests {
         assert!(S3::from_config(&json!({ "endpoint": "ftp://x", "bucket": "b", "access_key": "a", "secret_key": "s" })).is_err());
     }
 }
+
+// MinIO 集成测试（native-host：host_call 的 http.request 由 ureq 直连本地 MinIO）。
+// 断言对齐 jasper 主仓库曾有的宿主级 s3 round-trip 测试的插件行为部分；
+// 宿主适配层（PluginStorage/缓存键/build_cached）由主仓库的 webdav 等价测试覆盖。
+#[cfg(test)]
+mod minio_tests {
+	use super::*;
+	use sdk::serde_json::json;
+
+	#[test]
+	fn minio_round_trip_native_host() {
+		let Ok(endpoint) = std::env::var("JASPER_TEST_S3_URL") else {
+			eprintln!("跳过：未设 JASPER_TEST_S3_URL（docker compose -f docker-compose.dev.yml up -d 后设 http://127.0.0.1:9000）");
+			return;
+		};
+		let access_key = std::env::var("JASPER_TEST_S3_ACCESS_KEY").unwrap_or_else(|_| "minioadmin".into());
+		let secret_key = std::env::var("JASPER_TEST_S3_SECRET_KEY").unwrap_or_else(|_| "minioadmin".into());
+		// 桶名唯一（小写+数字+连字符）；prefix 再叠一层验证键前缀逻辑
+		let unique = format!(
+			"jasper-test-{}-{}",
+			std::process::id(),
+			std::time::SystemTime::now()
+				.duration_since(std::time::UNIX_EPOCH)
+				.unwrap()
+				.as_millis()
+		);
+		let cfg = json!({
+			"endpoint": endpoint.trim_end_matches('/'),
+			"region": "us-east-1",
+			"bucket": unique,
+			"prefix": "notes/joplin",
+			"access_key": access_key,
+			"secret_key": secret_key,
+		});
+		let s3 = S3::from_config(&cfg).unwrap();
+
+		// init_new：建桶（MinIO 上尽力）+ 写默认 info.json
+		s3.init_new().unwrap();
+
+		// 条目读写 + 列表带真实 mtime
+		let name = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.md";
+		let content = "S3 笔记\n\n正文 via native-host\n\nid: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\ntype_: 1\n";
+		s3.put_item(name, content).unwrap();
+		let items = s3.list_items().unwrap();
+		let it = items.iter().find(|i| i.name == name).expect("列表应包含新条目");
+		assert!(it.updated_time > 0, "ListObjectsV2 应带真实 LastModified");
+		assert_eq!(s3.get_item(name).unwrap(), content);
+
+		// 资源读写（体积跨 base64 分块边界）+ 删除幂等
+		let res_id = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+		let bytes: Vec<u8> = (0..=255u8).cycle().take(70_000).collect();
+		s3.put_resource(res_id, &bytes).unwrap();
+		assert_eq!(s3.get_resource(res_id).unwrap(), bytes);
+		s3.delete_resource(res_id).unwrap();
+		s3.delete_resource(res_id).unwrap();
+
+		// 清理条目（桶留着——测试桶名唯一不碍事）
+		for it in s3.list_items().unwrap() {
+			s3.delete_item(&it.name).unwrap();
+		}
+		assert!(s3.list_items().unwrap().is_empty());
+	}
+}

@@ -311,3 +311,83 @@ mod tests {
         assert!(extract_text(Provider::OpenAi, &openai_err).unwrap_err().message.contains("invalid model"));
     }
 }
+
+// 全链路测试（native-host：settings 内存注入 + http.request 走 ureq 打本地 stub）。
+// 覆盖 load_settings → 组请求 → 发请求 → 解析响应的粘合层；两种 provider 形状。
+#[cfg(test)]
+mod native_e2e {
+	use super::*;
+
+	/// 极简 stub 端点：任意请求都返回固定 JSON 体（正确处理 Content-Length，防 ureq 阻塞）。
+	fn spawn_stub(response_json: &'static str) -> String {
+		use std::io::{Read, Write};
+		let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+		let addr = listener.local_addr().unwrap();
+		std::thread::spawn(move || {
+			for stream in listener.incoming() {
+				let Ok(mut s) = stream else { break };
+				let mut buf = Vec::new();
+				let mut tmp = [0u8; 4096];
+				let (mut header_end, mut content_len) = (0usize, 0usize);
+				loop {
+					let Ok(n) = s.read(&mut tmp) else { break };
+					if n == 0 {
+						break;
+					}
+					buf.extend_from_slice(&tmp[..n]);
+					if header_end == 0 {
+						if let Some(pos) = buf.windows(4).position(|w| w == b"\r\n\r\n") {
+							header_end = pos + 4;
+							let head = String::from_utf8_lossy(&buf[..pos]);
+							content_len = head
+								.lines()
+								.find(|l| l.to_ascii_lowercase().starts_with("content-length:"))
+								.and_then(|l| l.split(':').nth(1))
+								.and_then(|v| v.trim().parse().ok())
+								.unwrap_or(0);
+						}
+					}
+					if header_end > 0 && buf.len() >= header_end + content_len {
+						break;
+					}
+				}
+				let resp = format!(
+					"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+					response_json.len(),
+					response_json
+				);
+				let _ = s.write_all(resp.as_bytes());
+			}
+		});
+		format!("http://{addr}")
+	}
+
+	#[test]
+	fn polish_end_to_end_both_providers() {
+		// 未配置 key → invalid（可读提示）
+		sdk::native_host::clear_settings();
+		let err = run_command("polish", json!({ "body": "原文" })).unwrap_err();
+		assert_eq!(err.code, "invalid");
+		assert!(err.message.contains("API Key"));
+
+		// anthropic 形状
+		let stub = spawn_stub(r#"{"content":[{"type":"text","text":"优化后的正文"}],"stop_reason":"end_turn"}"#);
+		sdk::native_host::set_setting("api_key", json!("sk-test"));
+		sdk::native_host::set_setting("api_url", json!(stub));
+		let out = run_command("polish", json!({ "body": "原文内容，有一些病句。。" })).unwrap();
+		assert_eq!(out["body"], "优化后的正文");
+
+		// openai 形状（provider 切换）
+		let stub = spawn_stub(
+			r#"{"choices":[{"message":{"role":"assistant","content":"openai 优化后"},"finish_reason":"stop"}]}"#,
+		);
+		sdk::native_host::set_setting("provider", json!("openai"));
+		sdk::native_host::set_setting("api_url", json!(stub));
+		let out = run_command("polish", json!({ "body": "原文" })).unwrap();
+		assert_eq!(out["body"], "openai 优化后");
+
+		// 空正文 → invalid
+		let err = run_command("polish", json!({ "body": "  " })).unwrap_err();
+		assert_eq!(err.code, "invalid");
+	}
+}

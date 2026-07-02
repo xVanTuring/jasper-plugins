@@ -18,7 +18,16 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
       - uses: Swatinem/rust-cache@v2
-      - name: Unit tests (native)
+      # MinIO：s3-storage 的 native-host 集成测试用（services 无法自定义 command，用 docker run）
+      - name: Start MinIO
+        run: |
+          docker run -d --name minio -p 9000:9000 \
+            -e MINIO_ROOT_USER=minioadmin -e MINIO_ROOT_PASSWORD=minioadmin \
+            minio/minio server /data
+          until curl -sf http://127.0.0.1:9000/minio/health/live; do sleep 1; done
+      - name: Unit + integration tests (native)
+        env:
+          JASPER_TEST_S3_URL: http://127.0.0.1:9000
         run: cargo test --workspace
       - name: Build wasm
         run: cargo build --release --target wasm32-unknown-unknown --workspace

@@ -1,0 +1,21 @@
+# 本地跑 s3-storage 的 MinIO 集成测试：
+#   docker compose -f docker-compose.dev.yml up -d
+#   JASPER_TEST_S3_URL=http://127.0.0.1:9000 cargo test --workspace
+#   docker compose -f docker-compose.dev.yml down -v
+# 凭据 minioadmin/minioadmin；桶不必预建——插件 init_new 会尽力 CreateBucket。
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: jasper-plugins-minio-dev
+    command: ["server", "/data"]
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - jasper_plugins_minio_data:/data
+    restart: unless-stopped
+
+volumes:
+  jasper_plugins_minio_data:

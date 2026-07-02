@@ -11,3 +11,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 jasper-plugin-sdk = "0.2"
+
+# native-host：测试时 host_call 走本地实现（settings 内存注入 + http→ureq），跑全链路 e2e
+[dev-dependencies]
+jasper-plugin-sdk = { version = "0.2.2", features = ["native-host"] }
