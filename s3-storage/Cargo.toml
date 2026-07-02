@@ -11,12 +11,12 @@ crate-type = ["cdylib"]
 
 [dependencies]
 jasper-plugin-sdk = "0.2"
-
-# native-host：测试时 host_call 走本地实现（http→ureq），让 MinIO 集成测试不进沙箱直接跑
-[dev-dependencies]
-jasper-plugin-sdk = { version = "0.2.2", features = ["native-host"] }
 roxmltree = "0.20"
 chrono = { version = "0.4", default-features = false, features = ["std"] }
 # SigV4：纯 Rust（RustCrypto），wasm32-unknown-unknown 可编译
 sha2 = "0.10"
 hmac = "0.12"
+
+# native-host：测试时 host_call 走本地实现（http→ureq），让 MinIO 集成测试不进沙箱直接跑
+[dev-dependencies]
+jasper-plugin-sdk = { version = "0.2.2", features = ["native-host"] }
