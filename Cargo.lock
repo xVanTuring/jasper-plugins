@@ -9,10 +9,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
 
 [[package]]
+name = "ai-chat"
+version = "0.1.0"
+dependencies = [
+ "jasper-plugin-sdk 0.3.0",
+]
+
+[[package]]
 name = "ai-polish"
 version = "0.1.0"
 dependencies = [
- "jasper-plugin-sdk",
+ "jasper-plugin-sdk 0.2.2",
 ]
 
 [[package]]
@@ -308,6 +315,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "jasper-plugin-sdk"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1396a01063990ee1adddf752b63952b22bc045e3cb95395e230553a354b150ec"
+dependencies = [
+ "base64",
+ "getrandom",
+ "jasper-core",
+ "serde",
+ "serde_json",
+ "ureq",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.186"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -450,7 +471,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "hmac",
- "jasper-plugin-sdk",
+ "jasper-plugin-sdk 0.2.2",
  "roxmltree",
  "sha2",
 ]

@@ -9,6 +9,7 @@ on this repo's [Releases](https://github.com/xVanTuring/jasper-plugins/releases)
 |---|---|---|
 | [`s3-storage`](s3-storage) | S3-compatible object storage as a sync source (AWS S3 / MinIO / Cloudflare R2, path-style, pure-Rust SigV4) | `host:http` |
 | [`ai-polish`](ai-polish) | One-click AI polish button in the source editor (Anthropic Messages or OpenAI Chat Completions format) | `settings`, `host:http` |
+| [`ai-chat`](ai-chat) | Sidebar AI chat over your notes (host-managed AI config): searches/reads the library, edits land as confirm-first proposals | `notes:read`, `notes:write`, `host:ai` |
 
 ## Installing
 

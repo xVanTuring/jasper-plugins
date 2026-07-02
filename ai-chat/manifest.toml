@@ -1,0 +1,25 @@
+id = "ai-chat"
+name = "AI 对话"
+version = "0.1.0"
+apiVersion = "0.3"
+minHostVersion = "2026.7.3"
+description = "侧边栏 AI 聊天：用宿主统一配置的 AI 服务对话；可搜索/阅读笔记库，改动以提案形式弹窗确认后才写入"
+
+[backend]
+wasm = "plugin.wasm"
+# notes:read：读当前笔记与搜索笔记库；notes:write：改动走提案回传（宿主弹 diff 确认）；
+# host:ai：经宿主代理调 AI（密钥在宿主设置页，插件不可见）
+capabilities = ["notes:read", "notes:write", "host:ai"]
+
+[[contributes.command]]
+id = "chat"
+title = "AI 对话"
+target = "backend"
+
+# 静态 chat widget：消息历史由前端持有，发送经 chat 命令进 wasm（spec §3.5/§9.2）
+[[contributes.sidebar]]
+id = "chat-panel"
+title = "AI 对话"
+icon = "chat"
+widget = "chat"
+command = "chat"

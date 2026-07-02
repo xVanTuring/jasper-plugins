@@ -33,14 +33,15 @@ MAX_ZIP_BYTES = 32 * 1024 * 1024
 MAX_UNPACKED_BYTES = 128 * 1024 * 1024
 MAX_FILES = 2000
 
-# Host-side vocabulary (manifest.rs, spec 0.2).
+# Host-side vocabulary (manifest.rs, spec 0.3).
 HOST_API_MAJORS = {"0"}
-CAPABILITIES = {"settings", "host:http"}
+CAPABILITIES = {"settings", "host:http", "notes:read", "notes:write", "host:ai"}
 HOOKS = {"before-save"}
 FIELD_TYPES = {"string", "multiline", "secret", "bool", "number", "select"}
 THEME_BASES = {"light", "dark"}
 COMMAND_TARGETS = {"backend", "builtin"}
 TOOLBAR_LOCATIONS = {"note-toolbar", "topbar"}
+WIDGET_TYPES = {"chat", "list", "tree", "form", "markdown", "button"}
 
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 
@@ -112,6 +113,7 @@ def validate(m: dict) -> list[str]:
             fail(f"storage {storage['id']} needs a [backend] section (it runs in wasm)")
         check_schema(storage.get("config_schema", {}), f"storage {storage['id']} config_schema")
     command_ids = set()
+    backend_command_ids = set()
     for cmd in contributes.get("command", []):
         if not ID_RE.match(cmd.get("id", "")):
             fail(f"command id {cmd.get('id')!r} invalid")
@@ -120,11 +122,32 @@ def validate(m: dict) -> list[str]:
         if cmd["target"] == "backend" and not backend:
             fail(f"command {cmd['id']}: target=backend needs a [backend] section")
         command_ids.add(cmd["id"])
+        if cmd["target"] == "backend":
+            backend_command_ids.add(cmd["id"])
     for tb in contributes.get("toolbar", []):
         if tb.get("location") not in TOOLBAR_LOCATIONS:
             fail(f"toolbar: location must be one of {sorted(TOOLBAR_LOCATIONS)}")
         if tb.get("command") not in command_ids:
             fail(f"toolbar references unknown command {tb.get('command')!r}")
+    sidebar_ids = set()
+    for sb in contributes.get("sidebar", []):
+        if not ID_RE.match(sb.get("id", "")):
+            fail(f"sidebar id {sb.get('id')!r} invalid")
+        if sb["id"] in sidebar_ids:
+            fail(f"sidebar id {sb['id']!r} duplicated")
+        sidebar_ids.add(sb["id"])
+        if not str(sb.get("title", "")).strip():
+            fail(f"sidebar {sb['id']}: title is required")
+        if sb.get("widget") not in WIDGET_TYPES:
+            fail(f"sidebar {sb['id']}: widget must be one of {sorted(WIDGET_TYPES)}")
+        if (sb.get("command") or sb.get("view")) and not backend:
+            fail(f"sidebar {sb['id']}: command/view needs a [backend] section")
+        if sb.get("command") and sb["command"] not in backend_command_ids:
+            fail(f"sidebar {sb['id']} references unknown backend command {sb['command']!r}")
+        if "view" in sb and not str(sb["view"]).strip():
+            fail(f"sidebar {sb['id']}: view must not be empty")
+        if sb["widget"] == "chat" and not sb.get("view") and not sb.get("command"):
+            fail(f"sidebar {sb['id']}: widget=chat without view requires a command")
 
     check_schema(m.get("settings", {}).get("schema", {}), "settings.schema")
     return assets

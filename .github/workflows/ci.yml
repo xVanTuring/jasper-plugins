@@ -33,7 +33,7 @@ jobs:
         run: cargo build --release --target wasm32-unknown-unknown --workspace
       - name: Validate + package all plugins
         run: |
-          for p in s3-storage ai-polish; do
+          for p in s3-storage ai-polish ai-chat; do
             python3 scripts/package.py "$p"
           done
       - uses: actions/upload-artifact@v4

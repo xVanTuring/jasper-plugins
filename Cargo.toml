@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["s3-storage", "ai-polish"]
+members = ["s3-storage", "ai-polish", "ai-chat"]
 
 # 插件统一走小体积产物；profile 只在 workspace 根生效
 [profile.release]

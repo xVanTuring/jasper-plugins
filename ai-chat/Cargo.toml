@@ -1,0 +1,17 @@
+[package]
+name = "ai-chat"
+version = "0.1.0"
+edition = "2021"
+description = "Jasper sidebar plugin: AI chat over your notes (host-managed AI config; edits arrive as confirm-first proposals)"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+jasper-plugin-sdk = "0.3"
+
+# native-host：测试时 host_call 走本地替身（notes 内存库 + ai.complete 预置回复队列），跑全链路行为测试
+[dev-dependencies]
+jasper-plugin-sdk = { version = "0.3.0", features = ["native-host"] }
