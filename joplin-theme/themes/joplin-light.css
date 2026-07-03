@@ -1,0 +1,41 @@
+/* Joplin 浅色主题（base: light）。
+   配色取自 Joplin 官方 packages/lib/themes/light.ts；注释里标注对应的源字段。
+   注意：Joplin 浅色的侧栏是「深底白字」(backgroundColor2 #313640)，但 Jasper 侧栏
+   与内容区共用同一 --text，无法做反差侧栏；故侧栏改用 backgroundColor3 的浅灰，
+   保证深色文字可读——整体呈「通体浅色」，内容区忠实还原白底深字。 */
+:root[data-theme='joplin-light'] {
+	/* 内容区主背景 / 顶部工具栏 / 侧边栏 */
+	--bg: #ffffff;           /* backgroundColor */
+	--bg-bar: #f0f0f0;       /* headerBackgroundColor（顶栏工具条） */
+	--bg-side: #f4f5f6;      /* backgroundColor3（浅灰侧栏，替代原深色侧栏） */
+
+	/* 文字 */
+	--text: #32373f;         /* color（正文） */
+	--text-dim: #627184;     /* colorFaded（计数、次要文字） */
+
+	/* 分隔线 / 悬浮态 */
+	--border: #dddddd;       /* dividerColor */
+	--hover: #eceef0;        /* selectedColor(#e5e5e5) 的低调变体，做 hover */
+
+	/* 强调色（Joplin 品牌蓝：新建按钮、选中、链接） */
+	--accent: #2d6bdc;       /* backgroundColor4 / 接近 urlColor(#155BDA) */
+	--accent-soft: rgba(45, 107, 220, 0.12);
+	--on-accent: #ffffff;
+
+	/* 行内代码 */
+	--code-bg: #f3f3f3;      /* codeBackgroundColor rgb(243,243,243) */
+
+	/* 状态色 */
+	--danger: #d00707;       /* destructiveColor */
+	--danger-soft: rgba(208, 7, 7, 0.1);
+	--danger-soft-weak: rgba(208, 7, 7, 0.05);
+	--success: #217a2e;      /* colorCorrect(green) 取协调深绿 */
+
+	/* 弹层 */
+	--overlay: rgba(0, 0, 0, 0.4);
+	--shadow-modal: 0 12px 40px rgba(0, 0, 0, 0.18);
+
+	/* 代码块（Joplin light 走 atom-one-light 语法配色，此处配其底色） */
+	--code-block-bg: #fafafb;
+	--code-block-text: #383a42;
+}

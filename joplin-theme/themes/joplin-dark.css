@@ -1,0 +1,39 @@
+/* Joplin 深色主题（base: dark）。
+   配色 1:1 取自 Joplin 官方 packages/lib/themes/dark.ts；注释里标注对应的源字段。
+   Jasper 的语义令牌清单见 plugin-spec §9.1（冻结契约）。 */
+:root[data-theme='joplin-dark'] {
+	/* 内容区主背景 / 顶部工具栏 / 侧边栏（Joplin 三层背景） */
+	--bg: #1d2024;           /* backgroundColor */
+	--bg-bar: #2d3136;       /* headerBackgroundColor（顶栏工具条） */
+	--bg-side: #181a1d;      /* backgroundColor2（侧边栏，比内容区更深） */
+
+	/* 文字 */
+	--text: #dddddd;         /* color（正文） */
+	--text-dim: #999999;     /* colorFaded（计数、次要文字） */
+
+	/* 分隔线 / 悬浮态 */
+	--border: #34383e;       /* dividerColor(#555) 收暗以贴合实际观感 */
+	--hover: #2a2d33;        /* selectedColor(#616161) 的低调变体，做 hover */
+
+	/* 强调色（Joplin 侧栏选中/链接的蓝） */
+	--accent: #5f8ee8;       /* color4(#789FE9) 基础上略加饱和，兼顾链接可读 */
+	--accent-soft: rgba(95, 142, 232, 0.2);
+	--on-accent: #ffffff;
+
+	/* 行内代码 */
+	--code-bg: #2f3031;      /* codeBackgroundColor rgb(47,48,49) */
+
+	/* 状态色 */
+	--danger: #f07777;       /* destructiveColor */
+	--danger-soft: rgba(240, 119, 119, 0.18);
+	--danger-soft-weak: rgba(240, 119, 119, 0.07);
+	--success: #72b972;      /* colorCorrect */
+
+	/* 弹层 */
+	--overlay: rgba(0, 0, 0, 0.5);
+	--shadow-modal: 0 12px 40px rgba(0, 0, 0, 0.5);
+
+	/* 代码块（Joplin dark 走 atom-one-dark 语法配色，此处配其底色） */
+	--code-block-bg: #282c34;
+	--code-block-text: #abb2bf;
+}

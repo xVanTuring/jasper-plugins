@@ -1,0 +1,21 @@
+id = "joplin-theme"
+name = "Joplin 主题"
+version = "0.1.0"
+apiVersion = "0.1"
+description = "还原 Joplin 官方浅色/深色主题的配色（令牌取自 Joplin 的 light.ts / dark.ts），让 Jasper 看起来像原生 Joplin。纯 CSS，无需任何权限。"
+author = "xVanTuring"
+
+# 纯主题插件：只有 [[contributes.theme]]，无 [backend]、无 wasm、无 capabilities。
+# 每个主题 = 一份 CSS，选择器为 :root[data-theme='<主题id>']，覆盖 §9.1 的颜色语义令牌。
+
+[[contributes.theme]]
+id = "joplin-light"
+name = "Joplin 浅色"
+base = "light"
+css = "themes/joplin-light.css"
+
+[[contributes.theme]]
+id = "joplin-dark"
+name = "Joplin 深色"
+base = "dark"
+css = "themes/joplin-dark.css"
