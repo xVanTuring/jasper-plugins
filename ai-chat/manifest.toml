@@ -1,9 +1,9 @@
 id = "ai-chat"
 name = "AI 对话"
-version = "0.1.0"
+version = "0.2.0"
 apiVersion = "0.3"
 minHostVersion = "2026.7.3"
-description = "侧边栏 AI 聊天：用宿主统一配置的 AI 服务对话；可搜索/阅读笔记库，改动以提案形式弹窗确认后才写入"
+description = "侧边栏 AI 助手：搜索/阅读笔记、改写选中的文字、精确替换或新建笔记（改动均以提案形式弹窗确认）；多会话历史，用宿主统一配置的 AI 服务"
 
 [backend]
 wasm = "plugin.wasm"

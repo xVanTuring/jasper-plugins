@@ -1,6 +1,6 @@
 [package]
 name = "ai-chat"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "Jasper sidebar plugin: AI chat over your notes (host-managed AI config; edits arrive as confirm-first proposals)"
 license = "MIT OR Apache-2.0"
