@@ -1,9 +1,9 @@
 # jasper-plugins
 
-Official plugins for [Jasper](https://github.com/xVanTuring/jasper), the
+Official plugins for [Jasper](https://github.com/jasper-note/jasper), the
 lightweight Joplin-compatible client. Each plugin lives in its own directory
 and is released as a `.jplug` package (zip of `manifest.toml` + `plugin.wasm`)
-on this repo's [Releases](https://github.com/xVanTuring/jasper-plugins/releases) page.
+on this repo's [Releases](https://github.com/jasper-note/jasper-plugins/releases) page.
 
 | Plugin | What it does | Capabilities |
 |---|---|---|
@@ -17,7 +17,7 @@ on this repo's [Releases](https://github.com/xVanTuring/jasper-plugins/releases)
 Download the `.jplug` from a release, then in Jasper: top bar → plug icon →
 Install → pick the file → enable (you'll be asked to consent to the declared
 capabilities). A browsable in-app market backed by
-[jasper-plugin-registry](https://github.com/xVanTuring/jasper-plugin-registry)
+[jasper-plugin-registry](https://github.com/jasper-note/jasper-plugin-registry)
 is on the roadmap.
 
 ## Development
@@ -47,7 +47,7 @@ wasm import section (only `joplin.host_call` is allowed). Zips are built
 deterministically, so the sha256 is reproducible from source.
 
 Writing your own plugin? Start from
-[jasper-plugin-template](https://github.com/xVanTuring/jasper-plugin-template).
+[jasper-plugin-template](https://github.com/jasper-note/jasper-plugin-template).
 
 ## Releasing (maintainers)
 
@@ -59,7 +59,7 @@ git tag s3-storage-v0.2.0 && git push origin s3-storage-v0.2.0
 
 CI verifies the tag against the manifest, tests, builds, and attaches the
 `.jplug` + `.sha256` to a GitHub Release. Then update the entry in
-[jasper-plugin-registry](https://github.com/xVanTuring/jasper-plugin-registry).
+[jasper-plugin-registry](https://github.com/jasper-note/jasper-plugin-registry).
 
 Note: the main Jasper repo keeps copies of these plugins under
 `plugins-examples/` as **host-test fixtures** (they exercise the plugin host's

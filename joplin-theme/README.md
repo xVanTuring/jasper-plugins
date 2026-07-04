@@ -1,6 +1,6 @@
 # joplin-theme
 
-让 [Jasper](https://github.com/xVanTuring/jasper) 看起来像原生 Joplin 的主题插件。
+让 [Jasper](https://github.com/jasper-note/jasper) 看起来像原生 Joplin 的主题插件。
 纯 CSS，**不申请任何权限**，包内只有 `manifest.toml` + 两份 `.css`。
 
 一个插件贡献两个主题：
@@ -23,7 +23,7 @@ Joplin **浅色**主题的侧边栏是「深蓝灰底 + 白字」(`backgroundCol
 侧栏改用 Joplin 的 `backgroundColor3`(`#F4F5F6`) 浅灰以保证深色文字可读。
 深色版不受此限，三层背景（内容/顶栏/侧栏）与 Joplin 高度一致。
 
-主题只覆盖 [plugin-spec §9.1](https://github.com/xVanTuring/jasper/blob/main/docs/plugin-spec.md)
+主题只覆盖 [plugin-spec §9.1](https://github.com/jasper-note/jasper/blob/main/docs/plugin-spec.md)
 的**颜色语义令牌**，未覆盖的令牌回退到 `base` 基调默认值；不依赖任何内部 class 选择器。
 
 ## 安装
